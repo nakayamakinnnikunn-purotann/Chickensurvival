@@ -2,6 +2,11 @@
 <html>
 <head>
   <style>
+    body {
+  text-align: center;
+  margin: 0;
+        overflow: hidden;
+}
     #chicken {
       position: absolute;
     }
@@ -11,6 +16,9 @@
   <img id="chicken" src="images/Rightwalk.gif" alt="Chicken" width="50％" height="50％">
 
   <script>
+       // イベントと関数を紐付け
+    document.addEventListener('touchmove', disableScroll, { passive: false });
+    document.body.classList.add('overflow-hidden');
     // 画像の初期位置と移動量
     var positionX = 0;
     var positionY = 0;
