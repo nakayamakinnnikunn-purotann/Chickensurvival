@@ -8,7 +8,7 @@
   </style>
 </head>
 <body>
-  <img id="chicken" src="Right00.png" alt="Chicken" />
+  <img id="chicken" src="images/Right00.png" alt="Chicken" />
 
   <script>
     // 画像の初期位置と移動量
@@ -32,10 +32,10 @@
       if (direction === "stop") {
         if (key === KEY_LEFT) {
           direction = "left";
-          chicken.src = "Leftwalk.gif";
+          chicken.src = "images/Leftwalk.gif";
         } else if (key === KEY_RIGHT) {
           direction = "right";
-          chicken.src = "Rightwalk.gif";
+          chicken.src = "images/Rightwalk.gif";
         }
         return;
       }
@@ -47,11 +47,11 @@
       } else if (key === KEY_LEFT) {
         positionX -= moveAmount;
         direction = "left";
-        chicken.src = "chicken_left.png";
+        chicken.src = "images/Leftwalk.gif";
       } else if (key === KEY_RIGHT) {
         positionX += moveAmount;
         direction = "right";
-        chicken.src = "chicken_right.png";
+        chicken.src = "images/Rightwalk.gif";
       }
 
       chicken.style.top = positionY + "px";
