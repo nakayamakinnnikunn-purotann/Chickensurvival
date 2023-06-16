@@ -2,27 +2,19 @@
 <html>
 <head>
   <style>
-    body {
-  
-}
     #chicken {
       position: absolute;
     }
   </style>
 </head>
 <body>
-  <img id="chicken" src="images/Rightwalk.gif" alt="Chicken" width="50％" height="50％">
+  <img id="chicken" src="Rightwalk.gif" alt="Chicken" />
 
   <script>
-       // イベントと関数を紐付け
-    document.addEventListener('touchmove', disableScroll, { passive: false });
-    document.body.classList.add('overflow-hidden');
-  // 画像の初期位置と移動量
+    // 画像の初期位置と移動量
     var positionX = 0;
     var positionY = 0;
     var moveAmount = 10;
-    var screenWidth = window.innerWidth;
-    var chickenWidth = 0;
 
     // 十字キーのキーコード
     var KEY_UP = 38;
@@ -35,33 +27,18 @@
       var key = event.keyCode;
       var chicken = document.getElementById("chicken");
 
-      // 画面の幅と鶏の幅を取得
-      screenWidth = window.innerWidth;
-      chickenWidth = chicken.width;
-
       if (key === KEY_UP) {
         positionY -= moveAmount;
       } else if (key === KEY_DOWN) {
         positionY += moveAmount;
       } else if (key === KEY_LEFT) {
         positionX -= moveAmount;
-
-        // 左端に到達した場合、跳ね返る
-        if (positionX <= 0) {
-          positionX = 0;
-        }
       } else if (key === KEY_RIGHT) {
         positionX += moveAmount;
-
-        // 右端に到達した場合、跳ね返る
-        if (positionX + chickenWidth >= screenWidth) {
-          positionX = screenWidth - chickenWidth;
-        }
       }
 
       chicken.style.top = positionY + "px";
       chicken.style.left = positionX + "px";
-    };
     };
   </script>
 </body>
