@@ -3,37 +3,28 @@
 <head>
   <title>タップした方向に移動するプログラム</title>
   <style>
-#canvas{
-	display: block;
-}
-html, body, #game{
-	width: 100%;
-	height: 100%;
-}
+    #canvas {
+      border: 1px solid black;
+    }
   </style>
 </head>
 <body>
- <div id=game> 
-  <canvas id="canvas" width="" height=""></canvas>
+  <div id="container">
+    <img id="image" src="images/Right00.png" alt="Image">
   </div>
-  <script>
-    // Canvas要素の取得
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
 
-    // 画像の読み込み
-    const image = new Image();
-    image.src = 'images/Right00.png'; // 画像のパスを指定してください
+  <script>
+    // 画像要素の取得
+    const image = document.getElementById('image');
 
     // 画像の初期位置
     let x = 100;
     let y = 100;
 
     // タップした位置の取得
-    canvas.addEventListener('click', (event) => {
-      const rect = canvas.getBoundingClientRect();
-      const tapX = event.clientX - rect.left;
-      const tapY = event.clientY - rect.top;
+    document.addEventListener('click', (event) => {
+      const tapX = event.clientX;
+      const tapY = event.clientY;
 
       // タップした方向に向かって移動
       moveImage(tapX, tapY);
@@ -41,8 +32,8 @@ html, body, #game{
 
     // 画像の移動
     function moveImage(tapX, tapY) {
-      const dx = tapX - x;
-      const dy = tapY - y;
+      const dx = tapX - (x + image.width / 2);
+      const dy = tapY - (y + image.height / 2);
 
       // 移動距離と移動時間の計算
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -56,14 +47,12 @@ html, body, #game{
         const progress = elapsedTime / duration;
 
         // 画像の座標更新
-        x = lerp(x, tapX, progress);
-        y = lerp(y, tapY, progress);
+        x = lerp(x, tapX - image.width / 2, progress);
+        y = lerp(y, tapY - image.height / 2, progress);
 
-        // Canvasのクリア
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // 画像の描画
-        ctx.drawImage(image, x, y);
+        // 画像の位置更新
+        image.style.left = x + 'px';
+        image.style.top = y + 'px';
 
         // アニメーションの終了判定
         if (progress < 1) {
