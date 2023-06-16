@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #chicken {
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <img id="chicken" src="/image/Rightwalk.gif" alt="Chicken" />
+
+  <script>
+    // 画像の初期位置と移動量
+    var positionX = 0;
+    var positionY = 0;
+    var moveAmount = 10;
+
+    // 十字キーのキーコード
+    var KEY_UP = 38;
+    var KEY_DOWN = 40;
+    var KEY_LEFT = 37;
+    var KEY_RIGHT = 39;
+
+    // キーダウンイベントのハンドラ
+    document.onkeydown = function(event) {
+      var key = event.keyCode;
+      var chicken = document.getElementById("chicken");
+
+      if (key === KEY_UP) {
+        positionY -= moveAmount;
+      } else if (key === KEY_DOWN) {
+        positionY += moveAmount;
+      } else if (key === KEY_LEFT) {
+        positionX -= moveAmount;
+      } else if (key === KEY_RIGHT) {
+        positionX += moveAmount;
+      }
+
+      chicken.style.top = positionY + "px";
+      chicken.style.left = positionX + "px";
+    };
+  </script>
+</body>
+</html>
