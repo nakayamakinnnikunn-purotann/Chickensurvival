@@ -1,70 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>タップした方向に移動するプログラム</title>
   <style>
-    #canvas {
+    canvas {
       border: 1px solid black;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div id="container">
-    <img id="image" src="images/Right00.png" alt="Image" width="50" height="50">
-  </div>
-
+  <canvas id="myCanvas" width="500" height="500"></canvas>
   <script>
-    // 画像要素の取得
-    const image = document.getElementById('image');
+    var canvas = document.getElementById("myCanvas");
+    var context = canvas.getContext("2d");
 
-    // 画像の初期位置
-    let x = 100;
-    let y = 100;
+    var x = canvas.width / 2;
+    var y = canvas.height / 2;
+    var radius = 50;
+    var isTapping = false;
+    var tapX = x;
+    var tapY = y;
 
-    // タップした位置の取得
-    document.addEventListener('click', (event) => {
-      const tapX = event.clientX;
-      const tapY = event.clientY;
+    function drawCircle(x, y, radius) {
+      context.beginPath();
+      context.arc(x, y, radius, 0, 2 * Math.PI);
+      context.fillStyle = "red";
+      context.fill();
+      context.closePath();
+    }
 
-      // タップした方向に向かって移動
-      moveImage(tapX, tapY);
+    function drawLine(x1, y1, x2, y2) {
+      context.beginPath();
+      context.moveTo(x1, y1);
+      context.lineTo(x2, y2);
+      context.strokeStyle = "blue";
+      context.lineWidth = 3;
+      context.stroke();
+      context.closePath();
+    }
+
+    function clearCanvas() {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function update() {
+      clearCanvas();
+
+      if (isTapping) {
+        drawLine(x, y, tapX, tapY);
+      }
+
+      drawCircle(x, y, radius);
+
+      if (isTapping) {
+        var dx = tapX - x;
+        var dy = tapY - y;
+        var distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance > radius) {
+          x += (dx / distance) * 5;
+          y += (dy / distance) * 5;
+        }
+      }
+    }
+
+    canvas.addEventListener("mousedown", function(event) {
+      isTapping = true;
+      tapX = event.pageX - canvas.offsetLeft;
+      tapY = event.pageY - canvas.offsetTop;
     });
 
-    // 画像の移動
-    function moveImage(tapX, tapY) {
-      const dx = tapX - (x + image.width / 2);
-      const dy = tapY - (y + image.height / 2);
+    canvas.addEventListener("mousemove", function(event) {
+      if (isTapping) {
+        tapX = event.pageX - canvas.offsetLeft;
+        tapY = event.pageY - canvas.offsetTop;
+      }
+    });
 
-      // 移動距離と移動時間の計算
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      const speed = 5; // 移動速度を調整する場合は、適宜変更してください
-      const duration = distance / speed;
+    canvas.addEventListener("mouseup", function() {
+      isTapping = false;
+    });
 
-      // 移動アニメーション
-      const startTime = performance.now();
-      requestAnimationFrame(function animate(currentTime) {
-        const elapsedTime = currentTime - startTime;
-        const progress = elapsedTime / duration;
-
-        // 画像の座標更新
-        x = lerp(x, tapX - image.width / 2, progress);
-        y = lerp(y, tapY - image.height / 2, progress);
-
-        // 画像の位置更新
-        image.style.left = x + 'px';
-        image.style.top = y + 'px';
-
-        // アニメーションの終了判定
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        }
-      });
-    }
-
-    // 線形補間
-    function lerp(start, end, t) {
-      return start * (1 - t) + end * t;
-    }
+    setInterval(update, 10);
   </script>
 </body>
 </html>
