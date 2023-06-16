@@ -8,43 +8,67 @@
   </style>
 </head>
 <body>
-  <img id="chicken" src="images/Left00.png" alt="Chicken" width="50" height="50"/>
+  <img id="chicken" src="Right00.png" alt="Chicken" />
 
   <script>
     // 画像の初期位置と移動量
     var positionX = 0;
+    var positionY = 0;
     var moveAmount = 10;
+    var direction = "right"; // 初期方向は右向き
 
     // 十字キーのキーコード
+    var KEY_UP = 38;
+    var KEY_DOWN = 40;
     var KEY_LEFT = 37;
     var KEY_RIGHT = 39;
 
     // キーダウンイベントのハンドラ
-    var isKeyPressed = {};
     document.onkeydown = function(event) {
       var key = event.keyCode;
-      isKeyPressed[key] = true;
+      var chicken = document.getElementById("chicken");
+
+      // 静止している場合の方向切り替え
+      if (direction === "stop") {
+        if (key === KEY_LEFT) {
+          direction = "left";
+          chicken.src = "Leftwalk.gif";
+        } else if (key === KEY_RIGHT) {
+          direction = "right";
+          chicken.src = "Rightwalk.gif";
+        }
+        return;
+      }
+
+      if (key === KEY_UP) {
+        positionY -= moveAmount;
+      } else if (key === KEY_DOWN) {
+        positionY += moveAmount;
+      } else if (key === KEY_LEFT) {
+        positionX -= moveAmount;
+        direction = "left";
+        chicken.src = "chicken_left.png";
+      } else if (key === KEY_RIGHT) {
+        positionX += moveAmount;
+        direction = "right";
+        chicken.src = "chicken_right.png";
+      }
+
+      chicken.style.top = positionY + "px";
+      chicken.style.left = positionX + "px";
     };
 
     // キーアップイベントのハンドラ
     document.onkeyup = function(event) {
       var key = event.keyCode;
-      isKeyPressed[key] = false;
-      document.getElementById("chicken").src = "images/Left00.png"; // 静止画像に切り替える
-    };
+      var chicken = document.getElementById("chicken");
 
-    // 定期的な移動処理
-    setInterval(function() {
-      if (isKeyPressed[KEY_LEFT]) {
-        positionX -= moveAmount;
-        document.getElementById("chicken").src = "images/Leftwalk.gif"; // 左向きの画像に切り替える
-      } else if (isKeyPressed[KEY_RIGHT]) {
-        positionX += moveAmount;
-        document.getElementById("chicken").src = "images/Rightwalk.gif"; // 右向きの画像に切り替える
+      // 静止時の処理
+      if (key === KEY_UP || key === KEY_DOWN || key === KEY_LEFT || key === KEY_RIGHT) {
+        chicken.src = "Right00.png";
+        direction = "stop";
       }
-
-      document.getElementById("chicken").style.left = positionX + "px";
-    }, 1000 / 60); // 60FPSで移動処理を行う
+    };
   </script>
 </body>
 </html>
