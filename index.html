@@ -1,74 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>タップした方向に移動するプログラム</title>
   <style>
-    #chicken {
-      position: absolute;
+    #game{
+    width: 100%;
+      height: 100%;
+    }
+    #canvas {
+      border: 1px solid black;
     }
   </style>
 </head>
 <body>
-  <img id="chicken" src="images/Right00.png" alt="Chicken" width="50" height="50"/>
-
+ <div id=game> 
+  <canvas id="canvas" width="" height=""></canvas>
+  </div>
   <script>
-    // 画像の初期位置と移動量
-    var positionX = 0;
-    var positionY = 0;
-    var moveAmount = 10;
-    var direction = "right"; // 初期方向は右向き
+    // Canvas要素の取得
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
 
-    // 十字キーのキーコード
-    var KEY_UP = 38;
-    var KEY_DOWN = 40;
-    var KEY_LEFT = 37;
-    var KEY_RIGHT = 39;
+    // 画像の読み込み
+    const image = new Image();
+    image.src = 'images/Right00.gif'; // 画像のパスを指定してください
 
-    // キーダウンイベントのハンドラ
-    document.onkeydown = function(event) {
-      var key = event.keyCode;
-      var chicken = document.getElementById("chicken");
+    // 画像の初期位置
+    let x = 100;
+    let y = 100;
 
-      // 静止している場合の方向切り替え
-      if (direction === "stop") {
-        if (key === KEY_LEFT) {
-          direction = "left";
-          chicken.src = "images/Leftwalk.gif";
-        } else if (key === KEY_RIGHT) {
-          direction = "right";
-          chicken.src = "images/Rightwalk.gif";
+    // タップした位置の取得
+    canvas.addEventListener('click', (event) => {
+      const rect = canvas.getBoundingClientRect();
+      const tapX = event.clientX - rect.left;
+      const tapY = event.clientY - rect.top;
+
+      // タップした方向に向かって移動
+      moveImage(tapX, tapY);
+    });
+
+    // 画像の移動
+    function moveImage(tapX, tapY) {
+      const dx = tapX - x;
+      const dy = tapY - y;
+
+      // 移動距離と移動時間の計算
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const speed = 5; // 移動速度を調整する場合は、適宜変更してください
+      const duration = distance / speed;
+
+      // 移動アニメーション
+      const startTime = performance.now();
+      requestAnimationFrame(function animate(currentTime) {
+        const elapsedTime = currentTime - startTime;
+        const progress = elapsedTime / duration;
+
+        // 画像の座標更新
+        x = lerp(x, tapX, progress);
+        y = lerp(y, tapY, progress);
+
+        // Canvasのクリア
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 画像の描画
+        ctx.drawImage(image, x, y);
+
+        // アニメーションの終了判定
+        if (progress < 1) {
+          requestAnimationFrame(animate);
         }
-        return;
-      }
+      });
+    }
 
-      if (key === KEY_UP) {
-        positionY -= moveAmount;
-      } else if (key === KEY_DOWN) {
-        positionY += moveAmount;
-      } else if (key === KEY_LEFT) {
-        positionX -= moveAmount;
-        direction = "left";
-        chicken.src = "images/Leftwalk.gif";
-      } else if (key === KEY_RIGHT) {
-        positionX += moveAmount;
-        direction = "right";
-        chicken.src = "images/Rightwalk.gif";
-      }
-
-      chicken.style.top = positionY + "px";
-      chicken.style.left = positionX + "px";
-    };
-
-    // キーアップイベントのハンドラ
-    document.onkeyup = function(event) {
-      var key = event.keyCode;
-      var chicken = document.getElementById("chicken");
-
-      // 静止時の処理
-      if (key === KEY_UP || key === KEY_DOWN || key === KEY_LEFT || key === KEY_RIGHT) {
-        chicken.src = "images/Right00.png";
-        direction = "stop";
-      }
-    };
+    // 線形補間
+    function lerp(start, end, t) {
+      return start * (1 - t) + end * t;
+    }
   </script>
 </body>
 </html>
